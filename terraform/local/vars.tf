@@ -50,9 +50,9 @@ variable "DRUID_OPERATOR_CHART" {
   default     = "../../helm_charts/druid-operator"
 }
 
-variable "DRUID_MIDDLE_MANAGER_WORKER_CAPACITY" {
+variable "DRUID_MIDDLE_MANAGER_WORKER_NODES" {
   type    = number
-  default = 2
+  default = 1
 }
 
 variable "DRUID_MIDDLE_MANAGER_PEON_HEAP" {

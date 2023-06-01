@@ -1,0 +1,6 @@
+namespace: ${submit_ingestion_namespace}
+druid_router_host: "druid-raw-${env}-routers.druid-raw.svc.cluster.local:8888"
+ingestion_spec:
+  system_stats:
+     topic: "${env}.stats"
+     name: "system-stats"
