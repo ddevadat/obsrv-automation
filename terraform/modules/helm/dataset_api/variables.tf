@@ -78,7 +78,7 @@ variable "dataset_api_container_registry" {
 variable "dataset_api_image_name" {
   type        = string
   description = "Dataset api image name."
-  default     = "obsrv-api-service"
+  default     = "sb-obsrv-api-service"
 }
 
 variable "dataset_api_image_tag" {
