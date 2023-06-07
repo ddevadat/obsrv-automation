@@ -1,7 +1,7 @@
 namespace: ""
 imagepullsecrets: ""
 registry: ""
-repository: "sanketikahub/obsrv-core"
+repository: "sunbird/obsrv-core"
 image_tag: "1.0.2"
 serviceMonitor:
   enabled: false
