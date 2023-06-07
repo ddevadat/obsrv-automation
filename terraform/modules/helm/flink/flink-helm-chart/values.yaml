@@ -465,7 +465,7 @@ unified-pipeline:
     heartbeat.interval: 5000
     state.savepoints.dir: file:///tmp
 
-  job_classname: in.sanketika.obsrv.pipeline.task.UnifiedPipelineStreamTask
+  job_classname: in.sunbird.obsrv.pipeline.task.UnifiedPipelineStreamTask
 
 serviceAccount:
   # Specifies whether a service account should be created
