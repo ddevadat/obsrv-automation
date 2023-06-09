@@ -37,25 +37,25 @@ variable "kubernetes_storage_class" {
 variable "dataset_api_container_registry" {
   type        = string
   description = "Container registry. For example docker.io/obsrv"
-  default     = "sanketikahub"
+  default     = "sunbird"
 }
 
 variable "dataset_api_image_tag" {
   type        = string
   description = "Dataset api image tag."
-  default     = "1.0.4"
+  default     = "1.0.0"
 }
 
 variable "flink_container_registry" {
   type        = string
   description = "Container registry. For example docker.io/obsrv"
-  default     = "sanketikahub"
+  default     = "sunbird"
 }
 
 variable "flink_image_tag" {
    type        = string
    description = "Flink kubernetes service name."
-   default     = "release-0.5.0_RC10"
+   default     = "1.0.0"
 }
 
 variable "storage_class" {
@@ -82,25 +82,25 @@ variable "web_console_configs" {
 variable "web_console_image_tag" {
   type        = string
   description = "web console image tag."
-  default = "release-0.5.0_RC4"
+  default = "1.0.0"
 }
 
 variable "web_console_image_repository" {
   type        = string
   description = "Container registry. For example docker.io/obsrv"
-  default     = "sanketikahub"
+  default     = "sunbird"
 }
 
 variable "flink_release_names" {
   description = "Create release names"
   type        = map(string)
   default = {
-    extractor       = "extractor"
-    preprocessor    = "preprocessor"
-    denormalizer    = "denormalizer"
-    transformer     = "transformer"
-    druid-router    = "druid-router"
-    master-data-processor = "master-data-processor"
+    extractor       = "sb-obsrv-extractor"
+    preprocessor    = "sb-obsrv-preprocessor"
+    denormalizer    = "sb-obsrv-denormalizer"
+    transformer     = "sb-obsrv-transformer"
+    druid-router    = "sb-obsrv-druid-router"
+    master-data-processor = "sb-obsrv-master-data-processor"
   }
 }
 
@@ -108,8 +108,8 @@ variable "flink_merged_pipeline_release_names" {
   description = "Create release names"
   type        = map(string)
   default = {
-    merged-pipeline = "merged-pipeline"
-    master-data-processor = "master-data-processor"
+    merged-pipeline = "sb-obsrv-merged-pipeline"
+    master-data-processor = "sb-obsrv-master-data-processor"
   }
 }
 

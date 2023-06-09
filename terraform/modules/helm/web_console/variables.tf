@@ -46,12 +46,13 @@ variable "web_console_chart_depends_on" {
 variable "web_console_image_repository" {
   type        = string
   description = "Container registry. For example docker.io/obsrv"
-  default     = "sanketikahub" 
+  default     = "sunbird" 
 }
 
 variable "web_console_image_tag" {
   type        = string
   description = "web console image tag."
+  default     = 1.0.0
 }
 
 variable "web_console_image_name" {
