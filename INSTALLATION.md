@@ -2,7 +2,7 @@
 
 ## Overview
 
-Obsrv comprises several pluggable tools and microservices that come together to enable observability features on any platform/solution. This includes the ability to capture granular events via telemetry, create measures, and observe various events/actions carried out by the system/users/devices (like IoT devices) on any platform/solution. Obsrv comes with a set of microservices, APIs, and some utility SDKs to make it easy for adopters to rapidly enable powerful data processing and aggregation infrastructure to process telemetry data, validate telemetry stream data, as well as aggregate and generate actionable insights via APIs. It also has built-in open data cataloging and publishing capability. It is built keeping extensibility in mind, so that adopters have the flexibility to adapt the telemetry and tools to their specific use-cases.
+Obsrv is composed of several pluggable tools and microservices that to enable observability on any platform/solution. This includes the ability to capture granular events via telemetry, create measures, and observe various events/actions carried out by system/users/devices (like IoT devices) on any platform/solution. Obsrv comes with a set of microservices, APIs, and some utility SDKs to make it easy for adopters to rapidly enable powerful data processing and analytical infrastructure. Obsrv enables you to process telemetry data, validate telemetry stream data, as well as aggregate and generate actionable insights via APIs. Obsrv also has a built-in open data cataloging and publishing capability. Obsrv is built keeping extensibility in mind, so that adopters have the flexibility to adapt the telemetry and tools to their specific use-cases.
 
 ## Keywords
 
@@ -16,10 +16,6 @@ A datasource refers to a specific subset or portion of a dataset that is selecte
 ## How to setup the obsrv?
 
 The Obsrv Automation repository provides a set of tools and scripts for setting up and configuring Obsrv. Clone the obsrv automation repository from [here](https://github.com/Sunbird-Obsrv/obsrv-automation).
-
-### **Keywords:**
-
-- S3 Cloud Storage: Amazon S3 (Simple Storage Service) is a scalable and secure cloud storage service offered by AWS, allowing users to store and retrieve data in the form of objects within buckets.
 
 ## Services Configured on Obsrv
 
@@ -67,21 +63,73 @@ The Obsrv Automation repository provides a set of tools and scripts for setting 
 
     `terragrunt apply`
 
+    export KUBE_CONFIG_PATH=./{cluster-name}.yaml # the previous command will build the cluster and then fail as it is unable to read the kube config. Hence, we need to export this variable and terragrunt apply again
+    `terragrunt apply`
+
 **Azure**
 
----TODO---
+   ### Prerequisites:
+1. Log into your cloud environment in your terminal. Please see [Sign in with Azure CLI](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli) for reference.
+        
+   `az login`
+        
+2. Create a storage account and export the below variables in your terminal. Please see [Create a storage container](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=/azure/storage/blobs/toc.json) for reference. Export the below variables in your terminal session
+
+    
+    `export AZURE_TERRAFORM_BACKEND_RG=myregion`  
+    `export AZURE_TERRAFORM_BACKEND_STORAGE_ACCOUNT=mystorage`  
+    `export AZURE_TERRAFORM_BACKEND_CONTAINER=mycontainer` 
+### Steps:
+In order to complete the installation, please run the below steps in the same terminal.
+    
+   `cd terraform/azure`
+
+   `terragrunt init`
+
+   `terragrunt plan`
+
+   `terragrunt apply`
+    
+
 
 **GCP**
 
----TODO---
+### Prerequisites:
+1. Setup the gcoud CLI. Please see [Installing Google Cloud SDK](https://cloud.google.com/sdk/docs/install) for reference.
+2. Initialize and Authenticate the gcloud CLI. Please see [Initializing Cloud SDK](https://cloud.google.com/sdk/docs/initializing) for reference.
 
-**OCI**
 
----TODO---
+`gcloud init`
+
+`gcloud auth login`
+ 
+3. Install additional dependencies to authenticate with GKE. Please see [Installing the gke-gcloud-auth-plugin](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl) for reference.
+
+`gcloud components install gke-gcloud-auth-plugin`
+
+4. Create a project and export it as variable. Please see [Creating and Managing Projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects) for reference.
+
+ `export GOOGLE_CLOUD_PROJECT=myproject`
+
+`export GOOGLE_TERRAFORM_BACKEND_BUCKET=mybucket`
+ 
+5. Enable the Kubernets Engine API for the created project. Please see [Enabling the Kubernetes Engine API](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster#enable-api) for reference.
+
+### Steps:
+In order to complete the installation, please run the below steps in the same terminal.
+
+`cd terraform/gcp`
+
+`terragrunt init`
+
+`terragrunt plan`
+
+`terragrunt apply`
+  
 
 To view cluster metrics and access the Obsrv web console, you can either use port forwarding or the Load Balancer IP. To port forward Obsrv web console service, type command `kubectl port-forward <obsrv-web-console-service> -n <web console namespace> <local-port>:<remote-port>`
 
-**Note:** During `terragrunt apply`, a kubeconfig file is automatically generated in the current directory for kubectl interaction. Verify the installation with `kubectl get ns`. If it fails, `export KUBECONFIG=<path_to_kubeconfig.yaml>` and `export KUBE_CONFIG_PATH=<path_to_kubeconfig.yaml>`. Retry `terragrunt apply`. Please refer to the repository's README file for specific instructions on configuring Obsrv on AWS and on other cloud providers.
+**Note:** Please refer to the repository's [README](https://github.com/Sunbird-Obsrv/obsrv-automation#readme) file for specific instructions on configuring Obsrv.
 
 ## How to create a dataset?
 
@@ -94,6 +142,7 @@ To view cluster metrics and access the Obsrv web console, you can either use por
     - **`data_schema`**: Json schema of the data in the dataset.
     - **`denorm_config`**: By denormalizing the user information, the telemetry dataset can become more self-contained and easier to analyze. It eliminates the need for additional queries or joins to retrieve user information when analyzing telemetry data. It has redis config and denorm_fields
     - **`router_config`**: It includes (**`topic`**) to which the dataset is published.
+    - **`dataset_config`**: It includes redis configuration (**`redis_host`**), (**`redis_port`**), the (`redis_db`) is for master datasets which specifies which db the data has to populate, (**`entry_topic`**) is used to specify to which kafka topic the API service has to ingest the events. Along with it has other fields like (**`data_key`**) and (**`timestamp_key`**).
 
 - **Create a master dataset**
     
