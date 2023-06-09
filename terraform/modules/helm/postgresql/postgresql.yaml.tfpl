@@ -52,6 +52,7 @@ primary:
             dataset_config JSON,
             status TEXT,
             tags TEXT[],
+            data_version INT,
             created_by TEXT,
             updated_by TEXT,
             created_date TIMESTAMP NOT NULL DEFAULT now(),

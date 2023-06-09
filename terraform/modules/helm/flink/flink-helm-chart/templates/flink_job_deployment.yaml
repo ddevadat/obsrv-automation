@@ -97,12 +97,15 @@ spec:
           - key: log4j_console_properties
             path: log4j-console.properties
       restartPolicy: OnFailure
-#      imagePullSecrets:
-#      - name: {{ .Values.imagepullsecrets }}
+{{- if ne .Values.image.imagePullSecrets "" }}
+      imagePullSecrets:
+      - name: {{ .Values.image.imagePullSecrets }}
+{{- end }}
+
       serviceAccount: {{ .Release.Namespace }}-sa
       containers:
       - name: {{ .Release.Name }}-jobmanager
-        image: "{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         resources:
           requests:
@@ -187,12 +190,14 @@ spec:
             path: base-config.conf
           - key: {{ .Release.Name }}
             path: {{ .Release.Name }}.conf
-#      imagePullSecrets:
-#      - name: {{ .Values.imagepullsecrets }}
+{{- if ne .Values.image.imagePullSecrets "" }}
+      imagePullSecrets:
+      - name: {{ .Values.image.imagePullSecrets }}
+{{- end }}
       serviceAccount: {{ .Release.Namespace }}-sa
       containers:
       - name: {{ .Release.Name }}-taskmanager
-        image: "{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: Always
         resources:
           requests:
