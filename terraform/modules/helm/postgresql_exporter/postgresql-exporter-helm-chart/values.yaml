@@ -31,7 +31,7 @@ serviceMonitor:
   # When set true then use a ServiceMonitor to configure scraping
   enabled: true
   # Set the namespace the ServiceMonitor should be deployed
-  namespace: monitoring
+  namespace: postgresql
   # namespace: postgresql
   # Set how frequently Prometheus should scrape
   interval: 30s
