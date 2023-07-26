@@ -6,7 +6,7 @@ image_tag: 1.0.0
 network:
   port: '3000'
   targetport: '3000'
-SYSTEM_ENV: "dev-new"
+SYSTEM_ENV: "sb-dev"
 TELEMETRY_KAFKA_COMPRESSION: snappy
 druid_service:
   DRUID_HOST: http://druid-raw-routers.druid-raw.svc
