@@ -139,6 +139,13 @@ We will explore a few use cases of Dataset Creation, Data Ingestion and Data Que
     ```
 ## Data Ingestion
 - To ingest the data in Druid, you will need to create it's ingestion spec. For reference, please see [Apache Kafka ingestion](https://druid.apache.org/docs/latest/development/extensions-core/kafka-ingestion.html) for detailed instructions and examples.
+
+Please ensure below points while creating a datasource
+
+ > 1. Make sure that the datasource name within the `ingestion_spec` object matches the value of the `datasource_ref` property.
+ 
+ > 2. Ensure that the topic name in the `ioconfig` object of the ingestion spec is the same as the topic name in the dataset request's `router_config`.
+
 - Create a Datasource based on the Dataset:   
     **End Point**: `/obsrv/v1/datasources`  
     **Method**: `POST`  
