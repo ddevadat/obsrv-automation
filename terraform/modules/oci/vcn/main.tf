@@ -13,6 +13,7 @@ resource "oci_core_vcn" "vcn" {
   cidr_blocks    = var.vcn_cidr
   compartment_id = var.compartment_id
   display_name   = "${var.building_block}-${var.env}-vcn"
+  dns_label = "obsrvcn"
 }
 
 
@@ -91,4 +92,59 @@ module "k8s_security_list" {
   security_list_display_name = "${var.building_block}-${var.env}-k8s-security-list"
   egress_rules               = local.egress_rules_k8s
   ingress_rules              = local.ingress_rules_k8s
+}
+
+module "worker_security_list" {
+  source                     = "../security_list"
+  compartment_id             = var.compartment_id
+  vcn_id                     = oci_core_vcn.vcn.id
+  security_list_display_name = "${var.building_block}-${var.env}-wrk-security-list"
+  egress_rules               = local.egress_rules_wrk
+  ingress_rules              = local.ingress_rules_wrk
+}
+
+module "lb_security_list" {
+  source                     = "../security_list"
+  compartment_id             = var.compartment_id
+  vcn_id                     = oci_core_vcn.vcn.id
+  security_list_display_name = "${var.building_block}-${var.env}-lb-security-list"
+  egress_rules               = local.egress_rules_lb
+  ingress_rules              = local.ingress_rules_lb
+}
+
+# -----------------------------------------------------------------------------
+# Create Subnet
+# -----------------------------------------------------------------------------
+
+module "k8s_subnet" {
+  source = "../subnet"
+  subnet_map            = { Workload-Spoke-WorkerNode-Subnet = local.subnet_map.K8S-Subnet }
+  compartment_id        = var.compartment_id
+  vcn_id                = oci_core_vcn.vcn.id
+  subnet_route_table_id = oci_core_route_table.public_route_table.id
+  subnet_security_list_id = toset([
+    module.k8s_security_list.security_list_id
+  ])
+}
+
+module "wrk_subnet" {
+  source = "../subnet"
+  subnet_map            = { Workload-Spoke-WorkerNode-Subnet = local.subnet_map.WRK-Subnet }
+  compartment_id        = var.compartment_id
+  vcn_id                = oci_core_vcn.vcn.id
+  subnet_route_table_id = oci_core_route_table.private_route_table.id
+  subnet_security_list_id = toset([
+    module.worker_security_list.security_list_id
+  ])
+}
+
+module "lb_subnet" {
+  source = "../subnet"
+  subnet_map            = { Workload-Spoke-WorkerNode-Subnet = local.subnet_map.LB-Subnet }
+  compartment_id        = var.compartment_id
+  vcn_id                = oci_core_vcn.vcn.id
+  subnet_route_table_id = oci_core_route_table.public_route_table.id
+  subnet_security_list_id = toset([
+    module.lb_security_list.security_list_id
+  ])
 }
