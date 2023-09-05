@@ -21,8 +21,8 @@ resource "oci_core_vcn" "vcn" {
 # -----------------------------------------------------------------------------
 resource "oci_core_nat_gateway" "nat-gw" {
   compartment_id = var.compartment_id
-  vcn_id = oci_core_vcn.vcn.id
-  display_name = "${var.building_block}-${var.env}-nat-gw"
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = "${var.building_block}-${var.env}-nat-gw"
 }
 
 # -----------------------------------------------------------------------------
@@ -38,20 +38,57 @@ resource "oci_core_internet_gateway" "int-gw" {
 # Create Service Gateway
 # -----------------------------------------------------------------------------
 
-data "oci_core_services" "service_gateway_all_oci_services" {
-  filter {
-    name   = "name"
-    values = ["All .* Services In Oracle Services Network"]
-    regex  = true
-  }
-}
-
 
 resource "oci_core_service_gateway" "svc-gw" {
   compartment_id = var.compartment_id
-  vcn_id          = oci_core_vcn.vcn.id
+  vcn_id         = oci_core_vcn.vcn.id
   services {
-        service_id = lookup(data.oci_core_services.service_gateway_all_oci_services.services[0], "id")
+    service_id = lookup(data.oci_core_services.all_services.services[0], "id")
   }
   display_name = "${var.building_block}-${var.env}-svc-gw"
+}
+
+# -----------------------------------------------------------------------------
+# Create Route Table
+# -----------------------------------------------------------------------------
+resource "oci_core_route_table" "public_route_table" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = "${var.building_block}-${var.env}-public-rt"
+  dynamic "route_rules" {
+    for_each = local.private_route_rules.route_rules
+    content {
+      description       = route_rules.key
+      network_entity_id = route_rules.value.network_entity_id
+      destination       = route_rules.value.destination
+      destination_type  = route_rules.value.destination_type
+    }
+  }
+}
+
+resource "oci_core_route_table" "private_route_table" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = "${var.building_block}-${var.env}-private-rt"
+  dynamic "route_rules" {
+    for_each = local.public_route_rules.route_rules
+    content {
+      description       = route_rules.key
+      network_entity_id = route_rules.value.network_entity_id
+      destination       = route_rules.value.destination
+      destination_type  = route_rules.value.destination_type
+    }
+  }
+}
+
+# -----------------------------------------------------------------------------
+# Create Security Rules
+# -----------------------------------------------------------------------------
+module "k8s_security_list" {
+  source                     = "../security_list"
+  compartment_id             = var.compartment_id
+  vcn_id                     = oci_core_vcn.vcn.id
+  security_list_display_name = "${var.building_block}-${var.env}-k8s-security-list"
+  egress_rules               = local.egress_rules_k8s
+  ingress_rules              = local.ingress_rules_k8s
 }
